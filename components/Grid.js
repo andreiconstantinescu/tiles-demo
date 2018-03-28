@@ -9,8 +9,8 @@ import {
 } from 'react-native'
 import AutoResponsive from 'autoresponsive-react-native'
 import {range, assign, times, reduce, map} from 'lodash'
-import {ITEMS_RANGE, LAYOUTS} from './constants'
-import styles from './styles'
+import {ITEMS_RANGE, LAYOUTS} from '../constants'
+import styles from '../styles'
 
 export default class Grid extends Component {
   state = {
@@ -35,7 +35,6 @@ export default class Grid extends Component {
   getRandomLayout = () => {
     const length = LAYOUTS.length
     const id = parseInt(Math.random() * length)
-    console.log('id', id)
     const selectedLayout = LAYOUTS[id]
 
     return assign({}, styles.gridItem, selectedLayout)
@@ -78,9 +77,6 @@ export default class Grid extends Component {
   render() {
     return (
       <ScrollView style={styles.container}>
-        <View style={styles.title}>
-          <Text style={styles.titleText}>autoresponsive</Text>
-        </View>
         <AutoResponsive {...this.getAutoResponsiveProps()}>
           {this.renderChildren()}
         </AutoResponsive>
