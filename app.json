@@ -1,7 +1,8 @@
 {
   "expo": {
-    "name": "tiles-demo",
-    "description": "This project is really great.",
+    "name": "Tiles Demo App",
+    "description":
+      "Simple useless resizeable tiles. Source Code available here: https://github.com/andreiconstantinescu/tiles-demo",
     "slug": "tiles-demo",
     "privacy": "public",
     "sdkVersion": "25.0.0",
