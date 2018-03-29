@@ -10,7 +10,7 @@ import {
 import AutoResponsive from 'autoresponsive-react-native'
 import {range, assign, times, reduce, map} from 'lodash'
 import {ITEMS_RANGE, LAYOUTS} from '../constants'
-import styles from '../styles'
+import {gridStyles as styles} from '../styles'
 
 export default class Grid extends Component {
   state = {

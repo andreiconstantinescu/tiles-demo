@@ -1,6 +1,8 @@
 import {SCREEN_WIDTH} from './constants'
+import {StyleSheet} from 'react-native'
+import {Constants} from 'expo'
 
-const styles = {
+const gridStyles = {
   container: {
     backgroundColor: '#301711'
   },
@@ -31,4 +33,11 @@ const styles = {
   }
 }
 
-export default styles
+const appStyles = StyleSheet.create({
+  statusBar: {
+    backgroundColor: 'white',
+    height: Constants.statusBarHeight
+  }
+})
+
+export {gridStyles, appStyles}
