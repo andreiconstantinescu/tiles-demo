@@ -5,20 +5,32 @@ import {
   TouchableOpacity
 } from 'react-native'
 import AutoResponsive from 'autoresponsive-react-native'
-import {API_URL, DYNAMIC_ITEMS} from '../constants'
+import {API_URL, DYNAMIC_ITEMS, LAYOUTS_2, DEFAULT_TILE_STYLE} from '../constants'
 import {gridStyles as styles} from '../styles'
-import {map} from 'lodash'
+import {map, find, reduce} from 'lodash'
 
 
 export default class DynamicGrid extends Component {
   state = {
-    tiles: []
+    tiles: reduce(DYNAMIC_ITEMS, (acc, {layoutId, style, title}, key) => (
+      {
+        ...acc,
+        [key]: {
+          style: {
+            ...LAYOUTS_2[layoutId],
+            ...style
+          },
+          title,
+          layoutId: layoutId
+        }
+      }
+    ), {})
   }
-  
+
   componentWillMount() {
+    const {tiles} = this.state
     const tilesData = map(DYNAMIC_ITEMS, ({api: {apiType, apiPayload, apiDataKey}}, key) => {
       const URL = `${API_URL}/${apiType}/${apiPayload}/`
-      console.log('URL', URL);
       return fetch(URL)
         .then(response => response.json())
         .then(data => data[apiDataKey])
@@ -26,21 +38,39 @@ export default class DynamicGrid extends Component {
 
     Promise.all(tilesData)
       .then(results => {
-        const tiles = map(results, (value, key) => ({
-          data: value,
-          style: DYNAMIC_ITEMS[key].style,
-          title: DYNAMIC_ITEMS[key].title
-        }))
+        const tilesWithData = reduce(results, (acc, value, key) => ({
+          ...acc,
+          [key]: {
+            ...tiles[key],
+            data: value
+          }
+          }), {})
 
-        this.setState({tiles})
+        this.setState({tiles: tilesWithData})
       })
+  }
+
+  onPressHandler = (id) => {
+    const {tiles} = this.state
+    const tile = tiles[id]
+    //
+    const maxLayouts = LAYOUTS_2.length - 1
+    const currentLayoutId = tile.layoutId
+    const nextLayoutId = currentLayoutId + 1
+    const newLayoutId = nextLayoutId > maxLayouts ? 0 : nextLayoutId
+    console.log({maxLayouts, currentLayoutId, nextLayoutId, newLayoutId, tile});
+    const newTile = {...tile, style: {...DYNAMIC_ITEMS[id].style, ...LAYOUTS_2[newLayoutId]}, layoutId: newLayoutId}
+    const newState = {...tiles, [id]: newTile}
+    //
+    this.setState({tiles: newState})
   }
 
   renderChildren() {
     const {tiles} = this.state
+
     return map(tiles, ({style, title, data}, key) => (
       <View style={style} key={key}>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => this.onPressHandler(key)}>
           <View style={styles.touchableItem}>
             <Text>{title}</Text>
             <Text>{data}</Text>
