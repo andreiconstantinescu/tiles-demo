@@ -2,7 +2,7 @@ import {Dimensions} from 'react-native'
 import {range} from 'lodash'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
-const MAX_ITEMS = 10
+const MAX_ITEMS = 4
 const LAYOUTS = [
   {
     height: 170,
@@ -47,6 +47,89 @@ const LAYOUTS = [
     backgroundColor: '#d63031'
   }
 ]
-const ITEMS_RANGE = range(MAX_ITEMS)
+const STATIC_ITEMS = range(MAX_ITEMS)
 
-export {SCREEN_WIDTH, MAX_ITEMS, LAYOUTS, ITEMS_RANGE}
+const API_URL = 'https://swapi.co/api'
+
+const DYNAMIC_ITEMS = [
+  {
+    api: {
+      apiType: 'people',
+      apiPayload: 1,
+      apiDataKey: 'name'
+    },
+    title: 'STAR WARS CHARACTER',
+    style: {
+      width: SCREEN_WIDTH / 2,
+      height: 170,
+      backgroundColor: '#e17055'
+    }
+  },
+  {
+    api: {
+      apiType: 'planets',
+      apiPayload: 1,
+      apiDataKey: 'name'
+    },
+    title: 'STAR WARS PLANET',
+    style: {
+      width: SCREEN_WIDTH / 2,
+      height: 170,
+      backgroundColor: '#e17055'
+    }
+  },
+  {
+    api: {
+      apiType: 'starships',
+      apiPayload: 9,
+      apiDataKey: 'name'
+    },
+    title: 'STAR WARS STARSHIP',
+    style: {
+      width: SCREEN_WIDTH / 2,
+      height: 170,
+      backgroundColor: '#e17055'
+    }
+  },
+  {
+    api: {
+      apiType: 'films',
+      apiPayload: 1,
+      apiDataKey: 'title'
+    },
+    title: 'STAR WARS FILM',
+    style: {
+      width: SCREEN_WIDTH / 2,
+      height: 170,
+      backgroundColor: '#e17055'
+    }
+  },
+  {
+    api: {
+      apiType: 'vehicles',
+      apiPayload: 4,
+      apiDataKey: 'name'
+    },
+    title: 'STAR WARS VEHICLE',
+    style: {
+      width: SCREEN_WIDTH / 2,
+      height: 170,
+      backgroundColor: '#e17055'
+    }
+  },
+  {
+    api: {
+      apiType: 'species',
+      apiPayload: 2,
+      apiDataKey: 'name'
+    },
+    title: 'STAR WARS SPECIES',
+    style: {
+      width: SCREEN_WIDTH / 2,
+      height: 170,
+      backgroundColor: '#e17055'
+    }
+  }
+]
+
+export {SCREEN_WIDTH, MAX_ITEMS, LAYOUTS, STATIC_ITEMS, API_URL, DYNAMIC_ITEMS}

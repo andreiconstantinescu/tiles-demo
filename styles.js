@@ -3,9 +3,6 @@ import {StyleSheet} from 'react-native'
 import {Constants} from 'expo'
 
 const gridStyles = {
-  container: {
-    backgroundColor: '#301711'
-  },
   title: {
     paddingTop: 20,
     paddingBottom: 20
@@ -37,6 +34,9 @@ const appStyles = StyleSheet.create({
   statusBar: {
     backgroundColor: 'white',
     height: Constants.statusBarHeight
+  },
+  scrollView: {
+    backgroundColor: '#301711'
   }
 })
 

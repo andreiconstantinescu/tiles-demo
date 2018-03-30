@@ -1,6 +1,7 @@
 import React from 'react'
-import {View} from 'react-native'
+import {View, ScrollView} from 'react-native'
 import Grid from './components/Grid'
+import DynamicGrid from './components/DynamicGrid'
 import {appStyles as styles} from './styles'
 
 export default class App extends React.Component {
@@ -8,7 +9,10 @@ export default class App extends React.Component {
     return (
       <View>
         <View style={styles.statusBar} />
-        <Grid />
+        <ScrollView style={styles.scrollView}>
+          <DynamicGrid />
+          <Grid />
+        </ScrollView>
       </View>
     )
   }

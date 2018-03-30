@@ -1,15 +1,13 @@
 import React, {Component} from 'react'
 import {
-  StyleSheet,
   View,
   Text,
   ScrollView,
-  Dimensions,
   TouchableOpacity
 } from 'react-native'
 import AutoResponsive from 'autoresponsive-react-native'
 import {range, assign, times, reduce, map} from 'lodash'
-import {ITEMS_RANGE, LAYOUTS} from '../constants'
+import {STATIC_ITEMS, LAYOUTS} from '../constants'
 import {gridStyles as styles} from '../styles'
 
 export default class Grid extends Component {
@@ -21,7 +19,7 @@ export default class Grid extends Component {
     const {itemLayoutMap} = this.state
 
     const newItemLayoutMap = reduce(
-      ITEMS_RANGE,
+      STATIC_ITEMS,
       (acc, idx) =>
         assign(acc, {
           [idx]: this.getRandomLayout()
@@ -59,7 +57,7 @@ export default class Grid extends Component {
   renderChildren() {
     const {itemLayoutMap} = this.state
 
-    return map(ITEMS_RANGE, (idx, key) => {
+    return map(STATIC_ITEMS, (idx, key) => {
       const style = itemLayoutMap[key]
 
       return (
@@ -76,11 +74,9 @@ export default class Grid extends Component {
 
   render() {
     return (
-      <ScrollView style={styles.container}>
-        <AutoResponsive {...this.getAutoResponsiveProps()}>
-          {this.renderChildren()}
-        </AutoResponsive>
-      </ScrollView>
+      <AutoResponsive {...this.getAutoResponsiveProps()}>
+        {this.renderChildren()}
+      </AutoResponsive>
     )
   }
 }
