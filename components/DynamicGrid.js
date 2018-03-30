@@ -8,23 +8,31 @@ import AutoResponsive from 'autoresponsive-react-native'
 import {API_URL, DYNAMIC_ITEMS, LAYOUTS_2, DEFAULT_TILE_STYLE} from '../constants'
 import {gridStyles as styles} from '../styles'
 import {map, find, reduce} from 'lodash'
+import {onPressHandler} from '../utils'
 
 
 export default class DynamicGrid extends Component {
-  state = {
-    tiles: reduce(DYNAMIC_ITEMS, (acc, {layoutId, style, title}, key) => (
-      {
-        ...acc,
-        [key]: {
-          style: {
-            ...LAYOUTS_2[layoutId],
-            ...style
-          },
-          title,
-          layoutId: layoutId
+  constructor(props) {
+    super(props)
+    this.state = {
+      tiles: reduce(DYNAMIC_ITEMS, (acc, {layoutId, style, title}, key) => (
+        {
+          ...acc,
+          [key]: {
+            style: {
+              ...LAYOUTS_2[layoutId],
+              ...style
+            },
+            title,
+            layoutId: layoutId
+          }
         }
-      }
-    ), {})
+      ), {})
+    }
+
+    // this.onPressHandler = onPressHandler.bind(this)
+    // console.log(this);
+
   }
 
   componentWillMount() {
@@ -52,17 +60,12 @@ export default class DynamicGrid extends Component {
 
   onPressHandler = (id) => {
     const {tiles} = this.state
-    const tile = tiles[id]
-    //
-    const maxLayouts = LAYOUTS_2.length - 1
-    const currentLayoutId = tile.layoutId
-    const nextLayoutId = currentLayoutId + 1
-    const newLayoutId = nextLayoutId > maxLayouts ? 0 : nextLayoutId
-    console.log({maxLayouts, currentLayoutId, nextLayoutId, newLayoutId, tile});
-    const newTile = {...tile, style: {...DYNAMIC_ITEMS[id].style, ...LAYOUTS_2[newLayoutId]}, layoutId: newLayoutId}
-    const newState = {...tiles, [id]: newTile}
-    //
-    this.setState({tiles: newState})
+    const payload = {
+      id,
+      tiles,
+      handler: ({tiles}) => this.setState({tiles})
+    }
+    return onPressHandler.call(this, payload)
   }
 
   renderChildren() {
