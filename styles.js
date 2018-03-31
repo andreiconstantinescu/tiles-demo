@@ -21,22 +21,35 @@ const gridStyles = {
   },
   gridItem: {
     width: SCREEN_WIDTH / 2,
-    paddingTop: 20,
     borderWidth: 1,
-    borderColor: 'black'
+    borderColor: 'white',
+    flex: 2
   },
   touchableItem: {
-    height: '100%'
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1
+  },
+  title: {
+    fontWeight: 'bold'
   }
 }
 
 const appStyles = StyleSheet.create({
   statusBar: {
-    backgroundColor: 'white',
-    height: Constants.statusBarHeight
+    backgroundColor: 'white'
   },
   scrollView: {
-    backgroundColor: '#301711'
+    // backgroundColor: '#301711'
+  },
+  appWraper: {
+    paddingTop: Constants.statusBarHeight
+  },
+  title: {
+    fontWeight: 'bold',
+    fontSize: 25,
+    marginTop: 10,
+    marginBottom: 10
   }
 })
 

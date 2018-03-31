@@ -1,82 +1,102 @@
 import React, {Component} from 'react'
-import {
-  View,
-  Text,
-  ScrollView,
-  TouchableOpacity
-} from 'react-native'
+import {View, Text, TouchableOpacity} from 'react-native'
 import AutoResponsive from 'autoresponsive-react-native'
-import {range, assign, times, reduce, map} from 'lodash'
-import {STATIC_ITEMS, LAYOUTS} from '../constants'
 import {gridStyles as styles} from '../styles'
+import {map, find, reduce} from 'lodash'
+import {onPressHandler} from '../utils'
 
-export default class Grid extends Component {
-  state = {
-    itemLayoutMap: {}
-  }
+export default class DynamicGrid extends Component {
+  constructor(props) {
+    super(props)
+    const {layouts, items} = this.props
 
-  componentWillMount() {
-    const {itemLayoutMap} = this.state
-
-    const newItemLayoutMap = reduce(
-      STATIC_ITEMS,
-      (acc, idx) =>
-        assign(acc, {
-          [idx]: this.getRandomLayout()
+    this.state = {
+      tiles: reduce(
+        items,
+        (acc, {layoutId, style, title}, key) => ({
+          ...acc,
+          [key]: {
+            style: {
+              ...layouts[layoutId],
+              ...style
+            },
+            title,
+            layoutId: layoutId
+          }
         }),
-      {}
-    )
-
-    this.setState({...this.state, itemLayoutMap: newItemLayoutMap})
-  }
-
-  getRandomLayout = () => {
-    const length = LAYOUTS.length
-    const id = parseInt(Math.random() * length)
-    const selectedLayout = LAYOUTS[id]
-
-    return assign({}, styles.gridItem, selectedLayout)
-  }
-
-  getAutoResponsiveProps() {
-    return {
-      itemMargin: 0
+        {}
+      )
     }
   }
 
-  onPressTile = idx => {
-    const layout = this.getRandomLayout()
-    const {itemLayoutMap} = this.state
-    const newItemLayoutMap = assign({}, itemLayoutMap, {
-      [idx]: layout
-    })
+  componentWillMount() {
+    const {api, items} = this.props
 
-    this.setState({...this.state, itemLayoutMap: newItemLayoutMap})
+    if (!api) {
+      return
+    }
+    const {tiles} = this.state
+    const tilesData = map(
+      items,
+      ({api: {apiType, apiPayload, apiDataKey}}, key) => {
+        const URL = `${api}/${apiType}/${apiPayload}/`
+        return fetch(URL)
+          .then(response => response.json())
+          .then(data => data[apiDataKey])
+      }
+    )
+
+    Promise.all(tilesData).then(results => {
+      const tilesWithData = reduce(
+        results,
+        (acc, value, key) => ({
+          ...acc,
+          [key]: {
+            ...tiles[key],
+            data: value
+          }
+        }),
+        {}
+      )
+
+      this.setState({tiles: tilesWithData})
+    })
   }
 
-  renderChildren() {
-    const {itemLayoutMap} = this.state
+  onPressHandler = id => {
+    const {layouts, items} = this.props
+    const {tiles} = this.state
+    const payload = {
+      id,
+      tiles,
+      handler: ({tiles}) => this.setState({tiles}),
+      layouts,
+      items
+    }
+    return onPressHandler.call(this, payload)
+  }
 
-    return map(STATIC_ITEMS, (idx, key) => {
-      const style = itemLayoutMap[key]
+  renderChildren = () => {
+    const {tiles} = this.state
 
-      return (
-        <View style={style} key={key}>
-          <TouchableOpacity onPress={() => this.onPressTile(key)}>
-            <View style={styles.touchableItem}>
-              <Text style={styles.text}>{key}</Text>
-            </View>
-          </TouchableOpacity>
-        </View>
-      )
-    })
+    return map(tiles, ({style, title, data}, key) => (
+      <View style={{...styles.gridItem, ...style}} key={key}>
+        <TouchableOpacity
+          style={styles.touchableItem}
+          onPress={() => this.onPressHandler(key)}
+        >
+          <View>
+            <Text style={styles.title}>{title}</Text>
+            <Text>{data}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
+    ))
   }
 
   render() {
     return (
-      <AutoResponsive {...this.getAutoResponsiveProps()}>
-        {this.renderChildren()}
-      </AutoResponsive>
+      <AutoResponsive itemMargin={0}>{this.renderChildren()}</AutoResponsive>
     )
   }
 }
